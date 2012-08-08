@@ -1,0 +1,75 @@
+You have the choice of the install, regards on wich technology you prefer : PHP or Pyhton.
+But don't use different server at the same time, or it may not work correctly.
+
+PHP
+---
+Requires Apache2 and PHP5 on you Pi, and also some tweaks :
+First install required packages :
+$ aptitude install apache2 php5
+Then download and extract WebIOPi to /var/www
+
+In order to work, PHP version of WebIOPi requires to allow .htaccess :
+Edit /etc/apache2/site-enabled/000-default
+and find the "<Directory /var/www>" section
+then change the line "AllowOverride None" to "AllowOverride All" :
+	<Directory /var/www/>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	</Directory>
+	
+You will also need to add apache's user (www-data) to the sudoers :
+$sudo visudo
+and add a new line with "www-data ALL=(ALL) NOPASSWD: ALL" at the end of file :
+#includedir /etc/sudoers.d
+pi ALL=(ALL) NOPASSWD: ALL
+www-data ALL=(ALL) NOPASSWD: ALL
+
+Exit, save, and confirm changes.
+
+You can now open a browser to http://raspberrypi/webiopi/  (or replace raspberrypi by your Pi's IP)
+  
+
+PYTHON
+------
+Requires RPi.GPIO module : http://pypi.python.org/pypi/RPi.GPIO/
+
+You will need Python development headers
+On Raspbian, with root user  (or using sudo):
+$ aptitude install python-dev
+
+Then download & install the module :
+$ wget http://pypi.python.org/packages/source/R/RPi.GPIO/RPi.GPIO-0.3.1a.tar.gz
+$ tar xvzf RPi.GPIO-0.3.1a.tar.gz
+$ cd RPi.GPIO-0.3.1a
+$ python setup.py install
+
+To install WebIOPi, just download and extract the archive wherever you want.
+To run it, open a terminal in the directory you extracted WebIOPi, and start the server process with root/sudo : 
+$ python webiopi.py [port]
+or
+$ ./webiopy.py [port]
+where port is the port to bind the HTTP server, default is 80, but maybe used by Apache.
+
+You can now open a browser to http://raspberrypi[:port]/ (or replace raspberrypi by your Pi's IP)
+
+
+Refer to README.txt for information about WebIOPi usage.
+
+------------------------------------------------------------------------------
+
+   Copyright 2012 Eric Ptak - trouch.com
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
