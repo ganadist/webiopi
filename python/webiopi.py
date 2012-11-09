@@ -24,7 +24,10 @@ import socket
 import mimetypes as mime
 import re
 import base64
-import _webiopi.GPIO as GPIO
+try:
+    import _webiopi.GPIO as GPIO
+except ImportError:
+    from dummy_GPIO import GPIO
 try:
     import BaseHTTPServer
 except ImportError:
