@@ -33,6 +33,7 @@ try:
 except ImportError:
     import http.server as BaseHTTPServer
 
+from cert import make_cert
 VERSION = '0.5.x'
 SERVER_VERSION = 'WebIOPi/Python/' + VERSION
 
@@ -64,7 +65,14 @@ class Server(BaseHTTPServer.HTTPServer, threading.Thread):
 #                raise Exception("Port %d already in use, try another one" % port)
 #            else:
              raise Exception(msg)
-            
+
+        import ssl
+        server_pem = os.path.join(os.path.dirname(__file__), 'server.pem')
+        if not os.path.isfile(server_pem):
+            make_cert(server_pem)
+        self.socket = ssl.wrap_socket(self.socket, certfile = server_pem,
+                server_side = True)
+  
         threading.Thread.__init__(self)
         self.port = port
         self.context = context
@@ -84,6 +92,8 @@ class Server(BaseHTTPServer.HTTPServer, threading.Thread):
             self.context = "/" + self.context
         if not self.context.endswith("/"):
             self.context += "/"
+
+
         self.start()
         
     def addMacro(self, callback):
@@ -124,7 +134,7 @@ class Server(BaseHTTPServer.HTTPServer, threading.Thread):
             pass
 
         self.running = True
-        log("Started at http://%s:%s%s" % (host, self.port, self.context))
+        log("Started at https://%s:%s%s" % (host, self.port, self.context))
         try:
             self.serve_forever()
         except socket.error as msg:
