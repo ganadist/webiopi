@@ -69,6 +69,8 @@ class Server(BaseHTTPServer.HTTPServer, threading.Thread):
         self.port = port
         self.context = context
         self.docroot = "/usr/share/webiopi/htdocs"
+        if not os.path.isdir(self.docroot):
+            self.docroot = os.path.join(os.path.dirname(__file__), '..', 'htdocs')
         self.index = index
         self.callbacks = {}
         self.log_enabled = False
